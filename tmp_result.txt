@@ -1,0 +1,63 @@
+label is:CCAT
+correctPositive:301
+totalLabeledPositive:443
+totalTruePositive:387
+precision:0.6794582392776524
+recall:0.7777777777777778
+0.7253012048192771
+
+label is:ECAT
+correctPositive:100
+totalLabeledPositive:307
+totalTruePositive:126
+precision:0.3257328990228013
+recall:0.7936507936507936
+0.46189376443418007
+
+label is:GCAT
+correctPositive:187
+totalLabeledPositive:263
+totalTruePositive:224
+precision:0.7110266159695817
+recall:0.8348214285714286
+0.7679671457905544
+
+label is:MCAT
+correctPositive:201
+totalLabeledPositive:387
+totalTruePositive:213
+precision:0.5193798449612403
+recall:0.9436619718309859
+0.67
+
+label is:CCAT
+correctPositive:277
+totalLabeledPositive:402
+totalTruePositive:387
+precision:0.6890547263681592
+recall:0.7157622739018088
+0.7021546261089987
+
+label is:ECAT
+correctPositive:82
+totalLabeledPositive:311
+totalTruePositive:126
+precision:0.26366559485530544
+recall:0.6507936507936508
+0.37528604118993136
+
+label is:GCAT
+correctPositive:143
+totalLabeledPositive:207
+totalTruePositive:224
+precision:0.6908212560386473
+recall:0.6383928571428571
+0.6635730858468677
+
+label is:MCAT
+correctPositive:191
+totalLabeledPositive:470
+totalTruePositive:213
+precision:0.40638297872340423
+recall:0.8967136150234741
+0.5592972181551976
