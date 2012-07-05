@@ -12,7 +12,7 @@ public class CompareBase {
 
 	private static String outputWordLabelFile = "labledWord.txt";
 	private static String trainingFile = "RCV1.small_train.txt";
-	private static String testFile = "RCV1.very_small_test.txt";
+	private static String testFile = "RCV1.small_test.txt";
 
 	private static String[] labels = { "CCAT", "ECAT", "GCAT", "MCAT" };
 	// contains all the words (features)
@@ -31,23 +31,27 @@ public class CompareBase {
 	// the test file.
 	private static HashMap<String, ArrayList<Double>> labeledDocs = new HashMap<String, ArrayList<Double>>();
 
+	//the true label for each docs 
+	private static HashMap<String, ArrayList<Boolean>> trueDocLabels = new HashMap<String, ArrayList<Boolean>>();
+	
 	private static String biasWord = "__BIAS__";
 	private static int iterationTime = 20;
 	private static double initLambda = 0.5;
 
 	public static void main(String[] args) {
 		initWords();
-		System.out.println(words.size());
+		//System.out.println(words.size());
 		initDocsAndLabels();
 		calculateBetaForWords();
 		outputTestFileLabel();
+		calculateF1Score();
 		
-		for (Entry<String, ArrayList<Double>> entry : labeledDocs.entrySet()) {
-			System.out.println("Lable is:" + entry.getKey());
-			for (Double value : entry.getValue()) {
-				System.out.println("    " + value);
-			}
-		}
+//		for (Entry<String, ArrayList<Double>> entry : labeledDocs.entrySet()) {
+//			System.out.println("Label is:" + entry.getKey());
+//			for (Double value : entry.getValue()) {
+//				System.out.println("    " + value);
+//			}
+//		}
 	}
 
 	private static void initWords() {
@@ -173,6 +177,7 @@ public class CompareBase {
 		// init the labeledDocs
 		for (String label : labels) {
 			labeledDocs.put(label, new ArrayList<Double>());
+			trueDocLabels.put(label, new ArrayList<Boolean>());
 		}
 
 		File trainFile = new File(path, testFile);
@@ -217,6 +222,7 @@ public class CompareBase {
 				// add the value to the result
 				for (int i = 0; i < labels.length; i++) {
 					labeledDocs.get(labels[i]).add(xtimesw[i]);
+					trueDocLabels.get(labels[i]).add(values[0].contains(labels[i])? true: false);
 				}
 
 				line = br.readLine();
@@ -225,6 +231,47 @@ public class CompareBase {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public static void calculateF1Score() {
+		for(String label: labels) {
+			System.out.println("label is:" + label);
+			
+			ArrayList<Double> docsResult = labeledDocs.get(label);
+			ArrayList<Boolean> trueDocsResult = trueDocLabels.get(label);
+			
+			int correctPositive = 0;
+			int totalLabeledPositive = 0;
+			int totalTruePositive = 0;
+			
+			double probability;
+			for(int i = 0; i < docsResult.size(); i++)  {
+				probability = 1 / (1 + Math.exp(-docsResult.get(i)));
+				
+				if(probability > 0.5) {
+					totalLabeledPositive++;
+					if(trueDocsResult.get(i)) {
+						correctPositive++;
+					}
+				}
+				
+				if(trueDocsResult.get(i)) {
+					totalTruePositive++;
+				}
+			}
+			
+			double precision = (double)correctPositive / (double)totalLabeledPositive;
+			double recall = (double)correctPositive / (double) totalTruePositive;
+			
+			double f1score = 2.0 * precision * recall / (precision + recall);
+			System.out.println("correctPositive:" + correctPositive);
+			System.out.println("totalLabeledPositive:" + totalLabeledPositive);
+			System.out.println("totalTruePositive:" + totalTruePositive);
+			System.out.println("precision:" + precision);
+			System.out.println("recall:" + recall);
+			System.out.println(f1score);
+			//probability = 1 / (1 + Math.exp(-weightedWord))
 		}
 	}
 
