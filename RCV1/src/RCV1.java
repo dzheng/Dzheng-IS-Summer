@@ -10,17 +10,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 public class RCV1 {
-	private static File path = new File("C:\\MSE\\IS\\RCV1");
-
 	// private static String testFile = "RCV1.very_small.txt";
 	// private static String dataFile = "RCV1.very_small.txt";
 
-	private static String trainingFile = "RCV1.small_train.txt";
-	private static String selectedDocFile = "immediate.txt";
-	private static String outputFile = "output.txt";
-	private static String outputSeedFile = "seed.txt";
-	private static String labelPropagatedFile = "label_prop_output.txt";
-	private static String outputWordLabelFile = "labledWord.txt";
 	// word occurrence-number pair for each document
 	private static ArrayList<HashMap<String, Double>> formattedDocs = new ArrayList<HashMap<String, Double>>();
 	// label for each document
@@ -32,9 +24,6 @@ public class RCV1 {
 	private static int docNumberPerClass = 10;
 	private static int labelCount = 4;
 	
-	private static String docPreffix = "MyTestDoc";
-	private static String dummyLabel = "__DUMMY__";
-
 	public static void main(String[] args) {
 //		 labelDocPairToFile();
 //		 formatEachDoc();
@@ -43,7 +32,7 @@ public class RCV1 {
 //		 calculateTFIDF();
 //		 outputDocWordTFIDF();
 //		 outputSeedFile();
-		outputLabelPropagated();
+		//outputLabelPropagated();
 	}
 
 	// create an intermediate file with label-content pair per line
@@ -51,8 +40,8 @@ public class RCV1 {
 		// create the file
 		// createFileInPath (outputFile);
 
-		File trainFile = new File(path, trainingFile);
-		File outFile = new File(path, selectedDocFile);
+		File trainFile = new File(Config.path, Config.trainingFile);
+		File outFile = new File(Config.path, Config.selectedDocFile);
 
 		BufferedReader br;
 		BufferedWriter bw;
@@ -111,7 +100,7 @@ public class RCV1 {
 	}
 
 	public static void formatEachDoc() {
-		File file = new File(path, selectedDocFile);
+		File file = new File(Config.path, Config.selectedDocFile);
 		BufferedReader br;
 		String[] values;
 		try {
@@ -245,7 +234,7 @@ public class RCV1 {
 	}
 
 	public static void outputDocWordTFIDF() {
-		File file = new File(path, outputFile);
+		File file = new File(Config.path, Config.outputFile);
 
 		BufferedWriter bw;
 		try {
@@ -262,7 +251,7 @@ public class RCV1 {
 					// bw.write(docLabels.get(i) + "\t" + i + "\t" + key + "\t"
 					// + value);
 					// use the format in junto
-					bw.write(docPreffix + i + "\t" + key + "\t" + value);
+					bw.write(Config.docPreffix + i + "\t" + key + "\t" + value);
 					bw.newLine();
 				}
 			}
@@ -275,14 +264,14 @@ public class RCV1 {
 	}
 
 	public static void outputSeedFile() {
-		File file = new File(path, outputSeedFile);
+		File file = new File(Config.path, Config.outputSeedFile);
 
 		BufferedWriter bw;
 		try {
 			bw = new BufferedWriter(new FileWriter(file));
 
 			for (int i = 0; i < docLabels.size(); i++) {
-				bw.write(docPreffix + i + "\t" + docLabels.get(i) + "\t" + "1.0");
+				bw.write(Config.docPreffix + i + "\t" + docLabels.get(i) + "\t" + "1.0");
 				bw.newLine();
 			}
 
@@ -292,56 +281,10 @@ public class RCV1 {
 			e.printStackTrace();
 		}
 
-	}
-
-	public static void outputLabelPropagated() {
-		File file = new File(path, labelPropagatedFile);
-		File opFile = new File(path, outputWordLabelFile);
-
-		BufferedReader br;
-		BufferedWriter bw;
-
-		try {
-			br = new BufferedReader(new FileReader(file));
-			bw = new BufferedWriter(new FileWriter(opFile));
-
-			String line;
-			
-			String[] values;
-			line = br.readLine();
-			int temp1, temp2;
-			String label;
-			while (line != null) {
-				values = line.split("\t");
-				
-				//doc's label is not needed, only word's label
-				if(values[0].startsWith(docPreffix)) {
-					line = br.readLine();
-					continue;
-				}
-				
-				temp1 = values[3].indexOf(' ');
-				label = values[3].substring(0, temp1);
-				if(label.equals(dummyLabel)) { // find the third whitespace index instead
-					temp2 = values[3].indexOf(' ', temp1 + 1);
-					label = values[3].substring(temp2 + 1, values[3].indexOf(' ', temp2 + 1));
-				}
-				bw.write(values[0] + "\t" + label);
-				bw.newLine();
-				
-				line = br.readLine();
-			}
-			
-			br.close();
-			bw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public static void createFileInPath(String file) {
-		File outputFile = new File(path, file);
+		File outputFile = new File(Config.path, file);
 		if (outputFile.exists()) {
 			if (!outputFile.delete()) {
 				System.out.println("The file:" + outputFile.getAbsolutePath()

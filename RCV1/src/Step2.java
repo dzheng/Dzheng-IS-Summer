@@ -11,13 +11,6 @@ import java.util.Map.Entry;
 
 public class Step2 {
 
-	private static File path = new File("C:\\MSE\\IS\\RCV1");
-
-	private static String trainingFile = "RCV1.small_train.txt";
-	private static String outputWordLabelFile = "labledWord.txt";
-	private static String testFile = "RCV1.small_test.txt";
-
-	private static String[] labels = { "CCAT", "ECAT", "GCAT", "MCAT" };
 	private static HashMap<String, HashSet<String>> labelAndWords = new HashMap<String, HashSet<String>>();
 	// the splitted docs with the words in order
 	private static ArrayList<ArrayList<String>> docWords = new ArrayList<ArrayList<String>>();
@@ -34,7 +27,6 @@ public class Step2 {
 	//the true label for each docs 
 	private static HashMap<String, ArrayList<Boolean>> trueDocLabels = new HashMap<String, ArrayList<Boolean>>();
 
-	private static String biasWord = "__BIAS__";
 	private static int iterationTime = 20;
 	private static double initLambda = 0.5;
 
@@ -86,12 +78,12 @@ public class Step2 {
 
 	public static void initLabelAndWords() {
 		// initialize the hashmap obj
-		for (int i = 0; i < labels.length; i++) {
-			labelAndWords.put(labels[i], new HashSet<String>());
+		for (int i = 0; i < Config.labels.length; i++) {
+			labelAndWords.put(Config.labels[i], new HashSet<String>());
 		}
 
 		// read the word label pair
-		File file = new File(path, outputWordLabelFile);
+		File file = new File(Config.path, Config.outputWordLabelFile);
 
 		BufferedReader br;
 
@@ -117,7 +109,7 @@ public class Step2 {
 
 	public static void initDocsWordsAndLabels() {
 		// read the training file, get the doc-label pair
-		File trainFile = new File(path, trainingFile);
+		File trainFile = new File(Config.path, Config.trainingFile);
 		BufferedReader br;
 
 		try {
@@ -132,13 +124,13 @@ public class Step2 {
 				values = line.split("\t");
 				// values[0] is the labels
 
-				for (int k = 0; k < labels.length; k++) {
-					if (values[0].contains(labels[k])) {
+				for (int k = 0; k < Config.labels.length; k++) {
+					if (values[0].contains(Config.labels[k])) {
 
 						// update the doc label
 						// duplicate the doc if there are two labels for each
 						// doc
-						docLabels.add(labels[k]);
+						docLabels.add(Config.labels[k]);
 
 						// values[1] is the content
 						// update the docWords
@@ -169,14 +161,14 @@ public class Step2 {
 
 	public static void constructDataset() {
 		// init the dataSet with labels as keys
-		for (String label : labels) {
+		for (String label : Config.labels) {
 			dataSet.put(label, new ArrayList<XandY>());
 		}
 
 		ArrayList<String> words;
 		// foreach label, go through the docs(words[]) and init the XandY object
 		// for each doc
-		for (String label : labels) {
+		for (String label : Config.labels) {
 			// for each doc
 			for (int i = 0; i < docWords.size(); i++) {
 				words = docWords.get(i);
@@ -197,7 +189,7 @@ public class Step2 {
 				}
 
 				// add the bias word (x0) for logistic regression
-				xandy.words.add(biasWord);
+				xandy.words.add(Config.biasWord);
 				dataSet.get(label).add(xandy);
 			}
 
@@ -207,7 +199,7 @@ public class Step2 {
 
 	// logistic regression
 	public static void calculateBetaForWords() {
-		for (String label : labels) { // for each label
+		for (String label : Config.labels) { // for each label
 			HashMap<String, Double> wordAndWeight = new HashMap<String, Double>();
 
 			for (int i = 1; i <= iterationTime; i++) { // iterative calculation
@@ -245,12 +237,12 @@ public class Step2 {
 
 	public static void outputTestFileLabel() {
 		// init the labeledDocs
-		for (String label : labels) {
+		for (String label : Config.labels) {
 			labeledDocs.put(label, new ArrayList<Double>());
 			trueDocLabels.put(label, new ArrayList<Boolean>());
 		}
 
-		File trainFile = new File(path, testFile);
+		File trainFile = new File(Config.path, Config.testFile);
 		BufferedReader br;
 
 		try {
@@ -269,10 +261,10 @@ public class Step2 {
 				String[] words = values[1].split("\\s");
 
 				// init the temp value for different classes
-				double[] xtimesw = new double[labels.length];
+				double[] xtimesw = new double[Config.labels.length];
 				for (int i = 0; i < xtimesw.length; i++) {
 					// add bias value first
-					xtimesw[i] = betas.get(labels[i]).get(biasWord);
+					xtimesw[i] = betas.get(Config.labels[i]).get(Config.biasWord);
 				}
 
 				for (int i = 0; i < words.length; i++) { // each word
@@ -282,23 +274,23 @@ public class Step2 {
 						continue;
 					}
 					// calculate the mark for that doc based on different labels
-					for (int j = 0; j < labels.length; j++) {
-						if (labelAndWords.get(labels[j]).contains(word)) { // the
+					for (int j = 0; j < Config.labels.length; j++) {
+						if (labelAndWords.get(Config.labels[j]).contains(word)) { // the
 																			// word
 																			// is
 																			// in
 																			// the
 																			// feature
 																			// set
-							xtimesw[j] += betas.get(labels[j]).get(word);
+							xtimesw[j] += betas.get(Config.labels[j]).get(word);
 						}
 					}
 				}
 
 				// add the value to the result
-				for (int i = 0; i < labels.length; i++) {
-					labeledDocs.get(labels[i]).add(xtimesw[i]);
-					trueDocLabels.get(labels[i]).add(values[0].contains(labels[i])? true: false);
+				for (int i = 0; i < Config.labels.length; i++) {
+					labeledDocs.get(Config.labels[i]).add(xtimesw[i]);
+					trueDocLabels.get(Config.labels[i]).add(values[0].contains(Config.labels[i])? true: false);
 				}
 
 				line = br.readLine();
@@ -311,7 +303,7 @@ public class Step2 {
 	}
 	
 	public static void calculateF1Score() {
-		for(String label: labels) {
+		for(String label: Config.labels) {
 			System.out.println("label is:" + label);
 			
 			ArrayList<Double> docsResult = labeledDocs.get(label);

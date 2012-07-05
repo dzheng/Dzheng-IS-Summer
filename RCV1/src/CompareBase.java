@@ -8,13 +8,6 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 public class CompareBase {
-	private static File path = new File("C:\\MSE\\IS\\RCV1");
-
-	private static String outputWordLabelFile = "labledWord.txt";
-	private static String trainingFile = "RCV1.small_train.txt";
-	private static String testFile = "RCV1.small_test.txt";
-
-	private static String[] labels = { "CCAT", "ECAT", "GCAT", "MCAT" };
 	// contains all the words (features)
 	private static HashSet<String> words = new HashSet<String>();
 
@@ -34,7 +27,6 @@ public class CompareBase {
 	//the true label for each docs 
 	private static HashMap<String, ArrayList<Boolean>> trueDocLabels = new HashMap<String, ArrayList<Boolean>>();
 	
-	private static String biasWord = "__BIAS__";
 	private static int iterationTime = 20;
 	private static double initLambda = 0.5;
 
@@ -55,7 +47,7 @@ public class CompareBase {
 	}
 
 	private static void initWords() {
-		File file = new File(path, outputWordLabelFile);
+		File file = new File(Config.path, Config.outputWordLabelFile);
 
 		BufferedReader br;
 
@@ -77,11 +69,11 @@ public class CompareBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		words.add(biasWord);
+		words.add(Config.biasWord);
 	}
 
 	private static void initDocsAndLabels() {
-		File trainFile = new File(path, trainingFile);
+		File trainFile = new File(Config.path, Config.trainingFile);
 		BufferedReader br;
 
 		try {
@@ -96,13 +88,13 @@ public class CompareBase {
 				values = line.split("\t");
 				// values[0] is the labels
 
-				for (int k = 0; k < labels.length; k++) {
-					if (values[0].contains(labels[k])) {
+				for (int k = 0; k < Config.labels.length; k++) {
+					if (values[0].contains(Config.labels[k])) {
 
 						// update the doc label
 						// duplicate the doc if there are two labels for each
 						// doc
-						docLabels.add(labels[k]);
+						docLabels.add(Config.labels[k]);
 
 						// values[1] is the content
 						// update the docWords
@@ -119,7 +111,7 @@ public class CompareBase {
 
 							outputWords.add(word);
 						}
-						outputWords.add(biasWord); //add the bias word
+						outputWords.add(Config.biasWord); //add the bias word
 						docWords.add(outputWords);
 					}
 				}
@@ -133,7 +125,7 @@ public class CompareBase {
 	}
 
 	public static void calculateBetaForWords() {
-		for (String label : labels) { // for each label
+		for (String label : Config.labels) { // for each label
 			HashMap<String, Double> wordAndWeight = new HashMap<String, Double>();
 
 			for (int iteration = 1; iteration <= iterationTime; iteration++) { // iterative calculation
@@ -175,12 +167,12 @@ public class CompareBase {
 	
 	public static void outputTestFileLabel() {
 		// init the labeledDocs
-		for (String label : labels) {
+		for (String label : Config.labels) {
 			labeledDocs.put(label, new ArrayList<Double>());
 			trueDocLabels.put(label, new ArrayList<Boolean>());
 		}
 
-		File trainFile = new File(path, testFile);
+		File trainFile = new File(Config.path, Config.testFile);
 		BufferedReader br;
 
 		try {
@@ -199,10 +191,10 @@ public class CompareBase {
 				String[] wordsInFile = values[1].split("\\s");
 
 				// init the temp value for different classes
-				double[] xtimesw = new double[labels.length];
+				double[] xtimesw = new double[Config.labels.length];
 				for (int i = 0; i < xtimesw.length; i++) {
 					// add bias value first
-					xtimesw[i] = betas.get(labels[i]).get(biasWord);
+					xtimesw[i] = betas.get(Config.labels[i]).get(Config.biasWord);
 				}
 
 				for (int i = 0; i < wordsInFile.length; i++) { // each word
@@ -212,17 +204,17 @@ public class CompareBase {
 						continue;
 					}
 					// calculate the mark for that doc based on different labels
-					for (int j = 0; j < labels.length; j++) {
+					for (int j = 0; j < Config.labels.length; j++) {
 						if (words.contains(word)) { // the// word// is// in// the// feature// set
-							xtimesw[j] += betas.get(labels[j]).get(word);
+							xtimesw[j] += betas.get(Config.labels[j]).get(word);
 						}
 					}
 				}
 
 				// add the value to the result
-				for (int i = 0; i < labels.length; i++) {
-					labeledDocs.get(labels[i]).add(xtimesw[i]);
-					trueDocLabels.get(labels[i]).add(values[0].contains(labels[i])? true: false);
+				for (int i = 0; i < Config.labels.length; i++) {
+					labeledDocs.get(Config.labels[i]).add(xtimesw[i]);
+					trueDocLabels.get(Config.labels[i]).add(values[0].contains(Config.labels[i])? true: false);
 				}
 
 				line = br.readLine();
@@ -235,7 +227,7 @@ public class CompareBase {
 	}
 	
 	public static void calculateF1Score() {
-		for(String label: labels) {
+		for(String label: Config.labels) {
 			System.out.println("label is:" + label);
 			
 			ArrayList<Double> docsResult = labeledDocs.get(label);
