@@ -220,13 +220,31 @@ public class Step2 {
 					probability = 1 / (1 + Math.exp(-weightedWord));
 
 					// update the weights
+//					for (String word : data.words) {
+//						if (wordAndWeight.containsKey(word)) {
+//							wordAndWeight.put(word, wordAndWeight.get(word)
+//									+ lambda * (labeled - probability));
+//						} else {
+//							wordAndWeight.put(word, 0.0);
+//						}
+//					}
+					
+					// updated again with word updated check
+					HashSet<String> wordUpdated = new HashSet<String>();
+					
 					for (String word : data.words) {
+						if(wordUpdated.contains(word)) {
+							continue;
+						}
+						
 						if (wordAndWeight.containsKey(word)) {
 							wordAndWeight.put(word, wordAndWeight.get(word)
 									+ lambda * (labeled - probability));
 						} else {
-							wordAndWeight.put(word, 0.0);
+							wordAndWeight.put(word, lambda * (labeled - probability));
 						}
+						
+						wordUpdated.add(word);
 					}
 				}
 			}
