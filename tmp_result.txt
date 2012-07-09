@@ -1,3 +1,4 @@
+//with all features first edition
 label is:CCAT
 correctPositive:301
 totalLabeledPositive:443
@@ -30,6 +31,75 @@ precision:0.5193798449612403
 recall:0.9436619718309859
 0.67
 
+//with all features second edition (fix a bug)
+label is:CCAT
+correctPositive:304
+totalLabeledPositive:449
+totalTruePositive:387
+precision:0.6770601336302895
+recall:0.7855297157622739
+0.7272727272727273
+
+label is:ECAT
+correctPositive:100
+totalLabeledPositive:299
+totalTruePositive:126
+precision:0.33444816053511706
+recall:0.7936507936507936
+0.4705882352941176
+
+label is:GCAT
+correctPositive:188
+totalLabeledPositive:264
+totalTruePositive:224
+precision:0.7121212121212122
+recall:0.8392857142857143
+0.7704918032786886
+
+label is:MCAT
+correctPositive:198
+totalLabeledPositive:382
+totalTruePositive:213
+precision:0.518324607329843
+recall:0.9295774647887324
+0.665546218487395
+
+//all features
+//avoid update multiple times
+
+label is:CCAT
+correctPositive:323
+totalLabeledPositive:443
+totalTruePositive:387
+precision:0.7291196388261851
+recall:0.834625322997416
+0.7783132530120483
+
+label is:ECAT
+correctPositive:107
+totalLabeledPositive:292
+totalTruePositive:126
+precision:0.3664383561643836
+recall:0.8492063492063492
+0.5119617224880384
+
+label is:GCAT
+correctPositive:187
+totalLabeledPositive:253
+totalTruePositive:224
+precision:0.7391304347826086
+recall:0.8348214285714286
+0.7840670859538784
+
+label is:MCAT
+correctPositive:205
+totalLabeledPositive:375
+totalTruePositive:213
+precision:0.5466666666666666
+recall:0.9624413145539906
+0.6972789115646257
+
+//with just some features
 label is:CCAT
 correctPositive:277
 totalLabeledPositive:402
@@ -61,3 +131,39 @@ totalTruePositive:213
 precision:0.40638297872340423
 recall:0.8967136150234741
 0.5592972181551976
+
+//regularized all features
+//avoid update multiple times 
+//avoid feature value change within a doc update
+label is:CCAT
+correctPositive:326
+totalLabeledPositive:450
+totalTruePositive:387
+precision:0.7244444444444444
+recall:0.8423772609819121
+0.7789725209080048
+
+label is:ECAT
+correctPositive:109
+totalLabeledPositive:293
+totalTruePositive:126
+precision:0.3720136518771331
+recall:0.8650793650793651
+0.5202863961813843
+
+label is:GCAT
+correctPositive:187
+totalLabeledPositive:253
+totalTruePositive:224
+precision:0.7391304347826086
+recall:0.8348214285714286
+0.7840670859538784
+
+label is:MCAT
+correctPositive:205
+totalLabeledPositive:371
+totalTruePositive:213
+precision:0.5525606469002695
+recall:0.9624413145539906
+0.702054794520548
+

@@ -29,12 +29,13 @@ public class CompareBase {
 	
 	private static int iterationTime = 20;
 	private static double initLambda = 0.5;
-
+	private static double miu = 0.05;
+    
 	public static void main(String[] args) {
 		initWords();
 		//System.out.println(words.size());
 		initDocsAndLabels();
-		calculateBetaForWords();
+		calculateBetaForWords2();
 		outputTestFileLabel();
 		calculateF1Score();
 		
@@ -124,6 +125,79 @@ public class CompareBase {
 		}
 	}
 
+	//logistic regression with regularization
+	public static void calculateBetaForWords2() {
+		for (String label: Config.labels) { //for each label
+			
+			HashMap<String, Double> wordAndWeight = new HashMap<String, Double>();
+			HashMap<String, Integer> wordAndLastUpdate = new HashMap<String, Integer>();
+			
+			for (int iteration = 1; iteration <= iterationTime; iteration++) {
+				
+				//init required variables
+				double lambda = initLambda / (iteration * iteration);
+				double weightedWord = 0;
+				double probability = 0;
+				
+				for (int i = 0; i < docWords.size(); i++) {// for each example
+					
+					double labeled = docLabels.get(i).equals(label)? 1.0 : 0.0;
+					
+					// calculate sum of xij * betaj
+					for (String word : docWords.get(i)) {
+						if (wordAndWeight.containsKey(word)) {
+							weightedWord += wordAndWeight.get(word);
+						}
+					}
+					
+					// calculate the probability
+					probability = 1 / (1 + Math.exp(-weightedWord));
+					
+					// update the regularization part
+					for (String word : docWords.get(i)) {
+						if (!wordAndWeight.containsKey(word)) { //if not in the weight, it should not appear in the last update either.
+							wordAndWeight.put(word, 0.0);
+							wordAndLastUpdate.put(word, 0); 
+						}	
+						
+						else {
+							double tmp = wordAndWeight.get(word) * Math.pow((1 - 2 * miu * lambda), (iteration - wordAndLastUpdate.get(word)));
+							wordAndWeight.put(word, tmp);
+							wordAndLastUpdate.put(word, iteration); // avoid update twice of the same feature if the word appears multiple times in the same doc.
+						}
+					}
+					
+					// update the common part
+					// avoid update twice of the same feature if the word appears multiple times in the same doc.
+					HashSet<String> wordUpdated = new HashSet<String>();
+					
+					for (String word : docWords.get(i)) {
+						if(wordUpdated.contains(word)) {
+							continue;
+						}
+						
+						wordAndWeight.put(word, wordAndWeight.get(word) + lambda * (labeled - probability));
+						wordAndLastUpdate.put(word, iteration); // also update the last update 
+						
+						wordUpdated.add(word);
+					}
+					
+				}
+				
+			}
+			
+			double lambda = initLambda / (iterationTime * iterationTime);
+			
+			for(Entry<String, Double> entry : wordAndWeight.entrySet()) {
+				double tmp = entry.getValue() * Math.pow((1 - 2 * miu * lambda), (iterationTime - wordAndLastUpdate.get(entry.getKey())));
+				entry.setValue(tmp);
+			}
+			
+			betas.put(label, wordAndWeight);
+		}
+	}
+	
+	//logistic regression
 	public static void calculateBetaForWords() {
 		for (String label : Config.labels) { // for each label
 			HashMap<String, Double> wordAndWeight = new HashMap<String, Double>();
@@ -149,13 +223,33 @@ public class CompareBase {
 					probability = 1 / (1 + Math.exp(-weightedWord));
 
 					// update the weights
+//					for (String word : docWords.get(i)) {
+//						if (wordAndWeight.containsKey(word)) {
+//							wordAndWeight.put(word, wordAndWeight.get(word)
+//									+ lambda * (labeled - probability));
+//						} else {
+//							wordAndWeight.put(word, 0.0);
+//						}
+//					}
+					
+					// update the weights 
+					// updated version
+					// updated again with word updated check
+					HashSet<String> wordUpdated = new HashSet<String>();
+					
 					for (String word : docWords.get(i)) {
+						if(wordUpdated.contains(word)) {
+							continue;
+						}
+						
 						if (wordAndWeight.containsKey(word)) {
 							wordAndWeight.put(word, wordAndWeight.get(word)
 									+ lambda * (labeled - probability));
 						} else {
-							wordAndWeight.put(word, 0.0);
+							wordAndWeight.put(word, lambda * (labeled - probability));
 						}
+						
+						wordUpdated.add(word);
 					}
 				}
 			}
