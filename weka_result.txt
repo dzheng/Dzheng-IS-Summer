@@ -1,0 +1,19 @@
+=== Naive Bayes ===
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.645     0.159      0.727     0.645     0.684      0.826    CCAT
+                 0.484     0.102      0.412     0.484     0.445      0.782    ECAT
+                 0.735     0.149      0.628     0.735     0.677      0.882    GCAT
+                 0.72      0.052      0.797     0.72      0.757      0.933    MCAT
+Weighted Avg.    0.664     0.125      0.677     0.664     0.667      0.858
+
+=== Logistic Regression ===
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.697     0.198      0.697     0.697     0.697      0.842    CCAT
+                 0.339     0.097      0.341     0.339     0.34       0.743    ECAT
+                 0.599     0.133      0.607     0.599     0.603      0.836    GCAT
+                 0.701     0.09       0.686     0.701     0.694      0.909    MCAT
+Weighted Avg.    0.627     0.145      0.626     0.627     0.626      0.842
