@@ -299,7 +299,7 @@ public class CompareBase {
 					}
 					// calculate the mark for that doc based on different labels
 					for (int j = 0; j < Config.labels.length; j++) {
-						if (words.contains(word)) { // the// word// is// in// the// feature// set
+						if (words.contains(word)) { // the word is in the feature set
 							xtimesw[j] += betas.get(Config.labels[j]).get(word);
 						}
 					}
@@ -357,6 +357,7 @@ public class CompareBase {
 			System.out.println("precision:" + precision);
 			System.out.println("recall:" + recall);
 			System.out.println(f1score);
+			System.out.println("");
 			//probability = 1 / (1 + Math.exp(-weightedWord))
 		}
 	}

@@ -12,7 +12,9 @@ public class Config {
 	public static final String outputSeedFile = "seed.txt";
 	public static final String labelPropagatedFile = "label_prop_output.txt";
 	public static final String outputWordLabelFile = "labledWord.txt";
+	//public static final String outputWordLabelFile = "randomLabledWord.txt";
 	public static final String testFile = "RCV1.small_test.txt";
+	public static final String PMIandRateFile = "PMIandRate.txt";
 	
 	public static final String docPreffix = "MyTestDoc";
 	public static final String dummyLabel = "__DUMMY__";

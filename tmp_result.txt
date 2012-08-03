@@ -170,6 +170,7 @@ recall:0.9061032863849765
 //regularized all features
 //avoid update multiple times 
 //avoid feature value change within a doc update
+//miu = 0.05
 label is:CCAT
 correctPositive:326
 totalLabeledPositive:450
